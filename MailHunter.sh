@@ -16,6 +16,7 @@ function add() {
     read blocked
     echo $blocked >> $FILE
   fi
+  echo "Agregado correctamente"
 }
 
 
