@@ -3,25 +3,47 @@
 # Script para administrar bloqueo de direcciones o dominios en zimbra mail server
 ########################################
 
+#Global variables
+FILE="/home/dmorfav/postfix_reject_sender"
+
+#This function is used for add a new domain or email to blocked list
+#If pass a parameter then execute the process automatic else ask to user
+function add() {
+  if [ -n "$1" ];then
+    echo $1 >> $FILE
+  else
+    echo "Introduce el dominio o la cuenta que desea bloquear"
+    read blocked
+    echo $blocked >> $FILE
+  fi
+}
+
+
 #This function is used for create the file if not exist
 function init() {
-  if [ ! -f /opt/zimbra/common/conf/postfix_reject_sender ]; then
-      touch /opt/zimbra/common/conf/postfix_reject_sender
+  if [ ! -f $FILE ]; then
+      touch $FILE
   fi
 }
 
 function execute() {
+  #Check if the config file exist
   init
+    case $1 in
+      'd' )
+        add $2
+        ;;
+    esac
 }
 
 case $1 in
   'a')
     echo "update"
-    execute a
+    execute $1 $2
   ;;
   'd')
     echo "add"
-    execute d
+    execute $1 $2
   ;;
   'e')
     echo "remove"
