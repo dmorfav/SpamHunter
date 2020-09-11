@@ -26,12 +26,24 @@ function init() {
   fi
 }
 
+#This method list the file with all blocked domains and emails
+function list() {
+  if [ ! -f $FILE ]; then
+      cat $FILE
+  else
+    echo "El fichero $FILE no existe"
+  fi
+}
+
 function execute() {
   #Check if the config file exist
   init
     case $1 in
       'd' )
         add $2
+        ;;
+      'l' )
+        list
         ;;
     esac
 }
@@ -42,7 +54,8 @@ case $1 in
     execute $1 $2
   ;;
   'd')
-    echo "add"
+    echo "Agregando dominio o email para bloquear"
+    echo "#######################################"
     execute $1 $2
   ;;
   'e')
@@ -50,7 +63,8 @@ case $1 in
     execute e
   ;;
   'l')
-    echo "list"
+    echo "Listado de los dominios bloqueados"
+    echo "##################################"
     execute l
   ;;
   *)
