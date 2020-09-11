@@ -9,12 +9,13 @@ FILE="/home/dmorfav/postfix_reject_sender"
 #This function is used for add a new domain or email to blocked list
 #If pass a parameter then execute the process automatic else ask to user
 function add() {
+  action=" REJECT"
   if [ -n "$1" ];then
-    echo $1 >> $FILE
+    echo $1$action >> $FILE
   else
     echo "Introduce el dominio o la cuenta que desea bloquear"
     read blocked
-    echo $blocked >> $FILE
+    echo $blocked$action >> $FILE
   fi
   echo "Agregado correctamente"
 }
