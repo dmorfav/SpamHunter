@@ -6,6 +6,14 @@
 #Global variables
 FILE="/home/dmorfav/postfix_reject_sender"
 
+#This method update the config of zimbra server
+function updateServer() {
+  host=$(hostname)
+  su zimbra -c "zmprov ms $host +zimbraMtaSmtpdSenderRestrictions $FILE"
+  su zimbra -c "/opt/zimbra/common/sbin/postmap $FILE"
+  su zimbra -c "zmmtactl restart"
+}
+
 #This method list the file with all blocked domains and emails
 function list() {
   if [ -f $FILE ]; then
@@ -37,6 +45,7 @@ function add() {
   else
       echo "El dominio ya existe"
   fi
+  updateServer
 }
 
 #This function is used for update a element of blocked list
@@ -60,6 +69,7 @@ function update() {
       sed -i "s/$search/$replace/" $FILE
     fi
   fi
+  updateServer
 }
 
 #This function is used for delete a element of blocked list
@@ -75,6 +85,7 @@ function delete() {
     read remove
     sed -i "/$remove/d" $FILE
  fi
+ updateServer
 }
 
 #This function is used for create the file if not exist
@@ -123,6 +134,9 @@ case $1 in
     echo "Listado de los dominios bloqueados"
     echo "##################################"
     execute $1 $2
+  ;;
+  'u' )
+    updateServer
   ;;
   *)
     echo -e "\n (A) Actualizar la lista \n (D) adicionar elemento a la lista \n (E) Eliminar elemento de la lista \n (L) Listar"
