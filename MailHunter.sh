@@ -15,33 +15,66 @@ function list() {
   fi
 }
 
+#Function for count how much find a word in the file
+function count() {
+  grep -c "$1" $FILE
+}
+
 #This function is used for add a new domain or email to blocked list
 #If pass a parameter then execute the process automatic else ask to user
 function add() {
   action=" REJECT"
-  if [ -n "$1" ];then
-    echo $1$action >> $FILE
+  exist= count $1
+  if [[ $exist -eq 0 ]];then
+    if [ -n "$1" ];then
+      echo $1$action >> $FILE
+    else
+      echo "Introduce el dominio o la cuenta que desea bloquear"
+      read blocked
+      echo $blocked$action >> $FILE
+    fi
+      echo "Agregado correctamente"
   else
-    echo "Introduce el dominio o la cuenta que desea bloquear"
-    read blocked
-    echo $blocked$action >> $FILE
+      echo "El dominio ya existe"
   fi
-  echo "Agregado correctamente"
 }
 
+#This function is used for update a element of blocked list
+#If pass a parameter then execute the process automatic else ask to user
 function update() {
-  echo "Listado de elementos"
-  echo "####################"
-  list
-  echo ""
-    # Text to search
-  read -p "Introduce el elemento que desea remplazar: " search
-    # Text to replace
-  read -p "Introduce el nuevo valor: " replace
+  if [[ -n "$1" && -n "$2" ]];then
+    if [[ $1 != "" && $2 != "" ]]; then
+      sed -i "s/$1/$2/" $FILE
+    fi
+  else
+    echo "Listado de elementos"
+    echo "####################"
+    list
+    echo ""
+      # Text to search
+    read -p "Introduce el elemento que desea remplazar: " search
+      # Text to replace
+    read -p "Introduce el nuevo valor: " replace
 
-  if [[ $search != "" && $replace != "" ]]; then
-    sed -i "s/$search/$replace/" $FILE
+    if [[ $search != "" && $replace != "" ]]; then
+      sed -i "s/$search/$replace/" $FILE
+    fi
   fi
+}
+
+#This function is used for delete a element of blocked list
+#If pass a parameter then execute the process automatic else ask to user
+function delete() {
+  if [ -n "$1" ];then
+    sed -i "/$1/d" $FILE
+  else
+    echo "Listado de los dominios bloqueados"
+    echo "##################################"
+    list
+    echo "Introduce el dominio o la cuenta que desea eliminar del listado"
+    read remove
+    sed -i "/$remove/d" $FILE
+ fi
 }
 
 #This function is used for create the file if not exist
@@ -62,8 +95,11 @@ function execute() {
         list
         ;;
       'a' )
-        update
+        update $2 $3
         ;;
+      'e' )
+        delete $2
+      ;;
     esac
 }
 
@@ -71,7 +107,7 @@ case $1 in
   'a')
   echo "Actualizando un dominio o email bloqueado"
   echo "#######################################"
-    execute $1 $2
+    execute $1 $2 $3
   ;;
   'd')
     echo "Agregando dominio o email para bloquear"
@@ -79,16 +115,17 @@ case $1 in
     execute $1 $2
   ;;
   'e')
-    echo "remove"
-    execute e
+  echo "Eliminando un dominio o email bloqueado"
+  echo "#######################################"
+    execute $1 $2
   ;;
   'l')
     echo "Listado de los dominios bloqueados"
     echo "##################################"
-    execute l
+    execute $1 $2
   ;;
   *)
-    echo -e "(A)ctualizar la lista \n a(D)icionar elemento a la lista \n (E)liminar elemento de la lista \n (L)istar"
+    echo -e "\n (A) Actualizar la lista \n (D) adicionar elemento a la lista \n (E) Eliminar elemento de la lista \n (L) Listar"
     read option
     execute $option
   ;;
