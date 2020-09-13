@@ -9,9 +9,11 @@ FILE="/opt/zimbra/common/conf/postfix_reject_sender"
 #This method update the config of zimbra server
 function updateServer() {
   host=$(hostname)
-  su zimbra -c "zmprov ms $host +zimbraMtaSmtpdSenderRestrictions $FILE"
-  su zimbra -c "/opt/zimbra/common/sbin/postmap $FILE"
-  su zimbra -c "zmmtactl restart"
+  su - zimbra
+  zmprov ms $host +zimbraMtaSmtpdSenderRestrictions $FILE
+  /opt/zimbra/common/sbin/postmap $FILE
+  zmmtactl restart
+  exit
 }
 
 #This method list the file with all blocked domains and emails
