@@ -24,51 +24,55 @@ function list() {
 }
 
 #Function for count how much find a word in the file
-function count() {
-  grep -c "$1" $FILE
+function checkExist() {
+  if grep -q "^$1:" $FILE
+  then
+    echo la entrada $1 ya existe en el sistema.
+    exit
+  fi
 }
 
 #This function is used for add a new domain or email to blocked list
 #If pass a parameter then execute the process automatic else ask to user
 function add() {
   action=" REJECT"
-  exist= count $1
-  if [[ $exist -eq 0 ]];then
+  checkExist $1
     if [ -n "$1" ];then
       echo $1$action >> $FILE
     else
       echo "Introduce el dominio o la cuenta que desea bloquear"
       read blocked
+      checkExist $blocked
       echo $blocked$action >> $FILE
     fi
       echo "Agregado correctamente"
   else
       echo "El dominio ya existe"
-  fi
   updateServer
 }
 
 #This function is used for update a element of blocked list
 #If pass a parameter then execute the process automatic else ask to user
 function update() {
-  if [[ -n "$1" && -n "$2" ]];then
-    if [[ $1 != "" && $2 != "" ]]; then
-      sed -i "s/$1/$2/" $FILE
+  checkExist $2
+    if [[ -n "$1" && -n "$2" ]];then
+      if [[ $1 != "" && $2 != "" ]]; then
+        sed -i "s/$1/$2/" $FILE
+      fi
+    else
+      echo "Listado de elementos"
+      echo "####################"
+      list
+      echo ""
+        # Text to search
+      read -p "Introduce el elemento que desea remplazar: " search
+        # Text to replace
+      read -p "Introduce el nuevo valor: " replace
+      checkExist $replace
+      if [[ $search != "" && $replace != "" ]]; then
+        sed -i "s/$search/$replace/" $FILE
+      fi
     fi
-  else
-    echo "Listado de elementos"
-    echo "####################"
-    list
-    echo ""
-      # Text to search
-    read -p "Introduce el elemento que desea remplazar: " search
-      # Text to replace
-    read -p "Introduce el nuevo valor: " replace
-
-    if [[ $search != "" && $replace != "" ]]; then
-      sed -i "s/$search/$replace/" $FILE
-    fi
-  fi
   updateServer
 }
 
@@ -98,6 +102,12 @@ function init() {
 function execute() {
   #Check if the config file exist
   init
+#Check if the user is root
+  if [ "$EUID" -ne 0 ]
+    then echo "Ejecutar como root"
+    exit
+  fi
+
     case $1 in
       'd' )
         add $2
