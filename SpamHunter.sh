@@ -8,8 +8,7 @@ FILE="/opt/zimbra/conf/postfix_reject_sender"
 
 #This method update the config of zimbra server
 function updateServer() {
-  host=$(hostname -f)
-  zmprov ms $host +zimbraMtaSmtpdSenderRestrictions $FILE
+  zmprov ms $(zmhostname) zimbraMtaSmtpdSenderRestrictions "actual_value, check_sender_access lmdb:$FILE"
   /opt/zimbra/common/sbin/postmap $FILE
   zmmtactl restart
   exit
