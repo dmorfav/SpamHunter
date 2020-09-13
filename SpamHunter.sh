@@ -46,8 +46,6 @@ function add() {
       echo $blocked$action >> $FILE
     fi
       echo "Agregado correctamente"
-  else
-      echo "El dominio ya existe"
   updateServer
 }
 
