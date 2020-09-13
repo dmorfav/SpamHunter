@@ -4,7 +4,7 @@
 ########################################
 
 #Global variables
-FILE="/opt/zimbra/common/conf/postfix_reject_sender"
+FILE="/opt/zimbra/conf/postfix_reject_sender"
 
 #This method update the config of zimbra server
 function updateServer() {
