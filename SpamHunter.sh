@@ -54,7 +54,9 @@ function add() {
       checkExist $blocked
       echo $blocked$action >> $FILE
     fi
-      echo "Agregado correctamente"
+      echo -e "Agregado correctamente\n"
+  echo -e "\n"
+  echo -e "Actualizando configuraciones de Zimbra\n"
   updateServer
 }
 
@@ -121,9 +123,6 @@ function execute() {
         ;;
       'e' )
         delete $2
-      ;;
-      'u' )
-        updateServer
       ;;
     esac
 }
