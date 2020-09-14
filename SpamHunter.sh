@@ -153,6 +153,9 @@ case $1 in
     updateServer
   ;;
   *)
+  clear
+  echo -e "\n SpamHunter is a script for blocked \n emails and domains in zimbra mail server\n"
+  echo -e "************************************************\n"
     echo -e "\n (A) Actualizar la lista \n (D) adicionar elemento a la lista \n (E) Eliminar elemento de la lista \n (L) Listar"
     read option
     execute $option
