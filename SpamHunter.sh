@@ -6,11 +6,19 @@
 #Global variables
 FILE="/opt/zimbra/conf/postfix_reject_sender"
 
+#Check if the user is root
+  function checkAccess() {
+    if [ "$EUID" -ne 0 ]
+      then echo "Ejecutar como root"
+      exit
+    fi
+  }
+
 #This method update the config of zimbra server
 function updateServer() {
-  zmprov ms $(zmhostname) zimbraMtaSmtpdSenderRestrictions "actual_value, check_sender_access lmdb:$FILE"
-  /opt/zimbra/common/sbin/postmap $FILE
-  zmmtactl restart
+  su zimbra -c 'zmprov ms $(zmhostname) zimbraMtaSmtpdSenderRestrictions "actual_value, check_sender_access lmdb:$FILE"'
+  su zimbra -c "/opt/zimbra/common/sbin/postmap $FILE"
+  su zimbra -c "zmmtactl restart"
   exit
 }
 
@@ -100,12 +108,6 @@ function init() {
 function execute() {
   #Check if the config file exist
   init
-#Check if the user is root
-  if [ "$EUID" -ne 0 ]
-    then echo "Ejecutar como root"
-    exit
-  fi
-
     case $1 in
       'd' )
         add $2
@@ -122,6 +124,7 @@ function execute() {
     esac
 }
 
+checkAccess
 case $1 in
   'a')
   echo "Actualizando un dominio o email bloqueado"
