@@ -4,7 +4,7 @@
 ########################################
 
 #Global variables
-FILE="/opt/zimbra/conf/postfix_reject_sender"
+FILE="/home/dmorfav/postfix_reject_sender"
 
 #Check if the user is root
   function checkAccess() {
@@ -34,7 +34,7 @@ function list() {
 
 #Function for count how much find a word in the file
 function checkExist() {
-  if grep -q "^$1:" $FILE
+  if grep -c "$1*" $FILE
   then
     echo la entrada $1 ya existe en el sistema.
     exit
