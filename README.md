@@ -12,7 +12,7 @@ This script help you to block incoming emails from a email address or domain in 
 the script can be used in two ways, one following the interactive mode which is executed by default if you do not pass any parameters and the other is passing parameters in the command
 
   ### Using with parameters
-  -Add `MailHunter a email@domain.com`
-  -Update `MailHunter a OldDomain NewDomain`
-  -Delete `MailHunter e domain`
-  -List `MailHunter l`
+  - **Add** `MailHunter a email@domain.com`
+  - **Update** `MailHunter a OldDomain NewDomain`
+  - **Delete** `MailHunter e domain`
+  - **List** `MailHunter l`
