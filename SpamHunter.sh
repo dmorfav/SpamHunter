@@ -16,9 +16,10 @@ FILE="/opt/zimbra/conf/postfix_reject_sender"
 
 #This method update the config of zimbra server
 function updateServer() {
-  su zimbra -c 'zmprov ms $(zmhostname) zimbraMtaSmtpdSenderRestrictions "actual_value, check_sender_access lmdb:$FILE"'
-  su zimbra -c "/opt/zimbra/common/sbin/postmap $FILE"
-  su zimbra -c "zmmtactl restart"
+  HOST=$(zmhostname)
+  su zimbra -c "$(zmprov ms $HOST zimbraMtaSmtpdSenderRestrictions \"actual_value, check_sender_access lmdb:$FILE\")"
+  su zimbra -c "$(/opt/zimbra/common/sbin/postmap $FILE)"
+  su zimbra -c "$(zmmtactl restart)"
   exit
 }
 
@@ -120,6 +121,9 @@ function execute() {
         ;;
       'e' )
         delete $2
+      ;;
+      'u' )
+        updateServer
       ;;
     esac
 }
