@@ -34,7 +34,7 @@ function list() {
 
 #Function for count how much find a word in the file
 function checkExist() {
-  if grep -q "^$1:" $FILE
+  if grep -c "$1*" $FILE
   then
     echo la entrada $1 ya existe en el sistema.
     exit
